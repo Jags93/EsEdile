@@ -182,6 +182,8 @@
     <Content Include="Views\Home\CreateDipendenti.cshtml" />
     <Content Include="Views\Home\DeleteDipendenti.cshtml" />
     <Content Include="Views\Home\EditDipendenti.cshtml" />
+    <Content Include="Views\Home\CreatePagamenti.cshtml" />
+    <Content Include="Views\Home\GetPagamenti.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

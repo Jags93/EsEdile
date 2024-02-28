@@ -49,6 +49,65 @@ namespace EsEdile.Controllers
 
             return View(dipendente);
         }
+
+        [HttpGet]
+        public ActionResult GetPagamenti()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["Edile1"].ConnectionString;
+            SqlConnection connection = new SqlConnection(connectionString);
+            List<Pagamenti> pagamenti = new List<Pagamenti>();
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("SELECT * FROM Pagamenti", connection);
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    Pagamenti p = new Pagamenti();
+                    p.IdPagamento = reader.GetInt32(0);
+                    p.PeriodoDiPagamento = reader.GetDateTime(1);
+                    p.Ammontare = reader.GetDecimal(2);
+                    p.Tipo = reader.GetString(3);
+                    p.IdPagamento = reader.GetInt32(4);
+                    pagamenti.Add(p);
+                }
+            }
+            catch (SqlException e)
+            {
+                ViewBag.Message = e.Message;
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return View(pagamenti);
+        }
+
+        public ActionResult CreatePagamenti() { return View(); }
+        [HttpPost]
+        public ActionResult CreatePagamenti(Pagamenti pagamento)
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["Edile1"].ConnectionString;
+            SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
+                connection.Open();
+                SqlCommand command = new SqlCommand("INSERT INTO Pagamenti (PeriodoDiPagamento, Ammontare, Tipo) VALUES (@PeriodoDiPagamento, @Ammontare, @Tipo)", connection);
+                command.Parameters.AddWithValue("@PeriodoDiPagamento", pagamento.PeriodoDiPagamento);
+                command.Parameters.AddWithValue("@Ammontare", pagamento.Ammontare);
+                command.Parameters.AddWithValue("@Tipo", pagamento.Tipo);
+                command.ExecuteNonQuery();
+            }
+            catch (SqlException e)
+            {
+                ViewBag.Message = e.Message;
+            }
+            finally
+            {
+                connection.Close();
+            }
+            return RedirectToAction("Index");
+        }
         public ActionResult CreateDipendenti() { return View(); }
         [HttpPost]
         public ActionResult CreateDipendenti(Dipendenti dipendente)
@@ -170,6 +229,7 @@ namespace EsEdile.Controllers
             }
             return RedirectToAction("Index");
         }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
